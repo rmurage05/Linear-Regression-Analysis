@@ -1,0 +1,3 @@
+"0","fit.comprehensive <- lm(selling_price ~ ., data = cars.df)"
+"0","coef_vals2 <- round(coef(summary(fit.comprehensive)), 4)"
+"0","kable(coef_vals2, caption = ""Comprehenive Model Coefficients"")"

@@ -1,0 +1,6 @@
+"0","seats.freq <- table(cars.df$seats)"
+"0","seats.pct <- prop.table(seats.freq) * 100"
+"0","seats.tbl <- data.frame(Seat_Number = names(seats.freq),"
+"0","                        Count = as.numeric(seats.freq),"
+"0","                        Percentage = round(as.numeric(seats.pct), 2))"
+"0","kable(seats.tbl, caption = ""Distribution of Number of Seats"")"

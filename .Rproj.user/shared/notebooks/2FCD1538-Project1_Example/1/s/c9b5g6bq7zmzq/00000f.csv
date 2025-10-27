@@ -1,0 +1,6 @@
+"0","label <- c(""Model 1"", ""Model 2"")"
+"0","avg.rmse1<-round(mean(rmse.one),2)"
+"0","avg.rmse2<-round(mean(rmse.two),2)"
+"0","rmse <- c(avg.rmse1, avg.rmse2)"
+"0","imb.tbl <- cbind(label, rmse)"
+"0","kable(imb.tbl, caption=""Mean RMSE for Models 1 and 2."")"

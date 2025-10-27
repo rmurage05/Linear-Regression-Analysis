@@ -1,0 +1,6 @@
+"0","transmission.freq <- table(cars.df$transmission)"
+"0","transmission.ptc <- prop.table(transmission.freq) * 100"
+"0","transmission.tbl <- data.frame(Transmission_Type = names(transmission.freq),"
+"0","                               Count = as.numeric(transmission.freq),"
+"0","                               Percentage = round(as.numeric(transmission.ptc), 2))"
+"0","kable(transmission.tbl, caption = ""Distribution of Transmission Types"")"

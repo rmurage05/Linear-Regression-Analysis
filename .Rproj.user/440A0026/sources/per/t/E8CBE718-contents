@@ -1,0 +1,284 @@
+---
+author: "Ryan Murage, Joshua Nichols"
+title: "The Effect of Vehicle Characteristics on Selling Price"
+date: "10/26/2025"
+output:
+  pdf_document:
+    number_sections: true
+---
+```{r echo=FALSE, include=FALSE, message=FALSE}
+# all library load statements here
+library(caret)
+library(knitr)
+library(scales)
+r.version <- "4.3.2"
+seed.val <- 123456
+```
+
+# Overview 
+
+The used car market is a significant portion of the automotive industry, with prices varying widely based on vehicle characteristics. Understanding which features most strongly influence selling prices can help both buyers and sellers make more informed decisions. In this analysis, we applied linear regression modeling to data from the used auto industry to investigate the effect of vehicle characteristics on selling price.
+
+The main question of this investigation is how do the characteristics of a used vehicle effect its selling price?
+
+# Data Description and Processing 
+
+The data set we used was compiled by the used auto industry which records the characteristics of used cars along with their selling price.
+
+The data set contains several types of observations about the characteristics for several used cars. Variables in the data set include: \
+selling_price (numeric): Selling price of the vehicle in US dollars. Dependent Variable \
+km_driven (numeric): The kilometers the car has been driven. \
+seller_type (categorical): Individual or dealer. \
+transmission (categorical): Manual or automatic. \
+owner (categorical): The number of previous owners of the vehicle, with levels: First Owner, Second Owner, Third Owner, Fourth and Above Owner. \
+mileage (numeric): The fuel consumption of a vehicle in miles per gallon. \
+engine (numeric): The volume of an engine in CCs. \
+max_power (numeric): The horsepower of a vehicle in bhp (brake horsepower). \
+seats (categorical): The number of seats. \
+
+The data set was checked for missing values. Of the original 3,425 observations, we removed 111 observations that contained missing values leaving 3,314 complete observations. 
+
+```{r echo=FALSE, include=FALSE}
+cars.df <- read.csv("dataset3-3.csv")
+cars.df <- na.omit(cars.df)
+cars.df$seller_type <- factor(cars.df$seller_type)
+cars.df$transmission <- factor(cars.df$transmission)
+cars.df$owner <- factor(cars.df$owner,
+                        levels = c("First Owner", "Second Owner", "Third Owner", "Fourth & Above Owner"))
+cars.df$seats <- factor(cars.df$seats)
+```
+
+\newpage
+
+# Data Exploration 
+
+```{r echo=FALSE}
+sum_stats <- summary(cars.df$selling_price)
+
+summary_tbl <- data.frame(Statistic = names(sum_stats),
+                          Value = as.numeric(sum_stats))
+
+summary_tbl$Value <- format(summary_tbl$Value, scientific = FALSE, big.mark = ",")
+
+kable(summary_tbl, caption = "Summary Statistics for Selling Price")
+
+```
+
+The table above shows descriptive statistics for selling price, including the minimum, first quartile, median, mean, third quartile, and maximum values. 
+
+We then explored the distribution of our outcome variable, selling price.
+
+```{r echo=FALSE, out.width="50%", fig.align='center', fig.cap="Distribution of Selling Price"}
+hist(cars.df$selling_price, freq = FALSE,
+     main = "",
+     xlab = "Selling Price (USD)",
+     breaks = 20,
+     axes = FALSE)
+axis(1, at = axTicks(1), labels = comma(axTicks(1)))
+axis(2)
+lines(density(cars.df$selling_price), col = "blue", lwd = 2)
+```
+
+This histogram displays that the prices for the vehicles are right-skewed, with a large majority of observations concentrated on the lower end of the price range. This makes sense as most cars available on the used car market are affordable, with few vehicles being high-end. 
+
+\newpage
+
+We also explored the distribution of categorical variables. The following tables and plots display the frequency of observations across seller type, transmission type, previous ownership, and number of seats. 
+
+```{r echo=FALSE, fig.align='center', fig.cap="Distribution of Seller Types", out.width="50%"}
+seller_freq <- table(cars.df$seller_type)
+seller_pct <- prop.table(seller_freq) * 100
+seller_tbl <- data.frame(Seller_Type = names(seller_freq),
+                         Count = as.numeric(seller_freq),
+                         Percentage = round(as.numeric(seller_pct), 2))
+
+kable(seller_tbl, caption = "Distribution of Seller Types")
+
+barplot(seller_freq,
+        xlab = "Seller Type",
+        ylab = "Frequency",
+        axes = FALSE)
+axis(2)
+```
+
+These results show that a large majority of sellers for used vehicles are individuals, which account for 87.6% of the vehicles being sold in the data set. 
+
+```{r echo=FALSE, out.width="50%", fig.align = 'center', fig.cap="Distribution of Transmission Types."}
+transmission.freq <- table(cars.df$transmission)
+transmission.ptc <- prop.table(transmission.freq) * 100
+transmission.tbl <- data.frame(Transmission_Type = names(transmission.freq),
+                               Count = as.numeric(transmission.freq),
+                               Percentage = round(as.numeric(transmission.ptc), 2))
+kable(transmission.tbl, caption = "Distribution of Transmission Types")
+
+barplot(transmission.freq, 
+        xlab = "Transmission Type",
+        ylab = "Frequency",
+        axes = FALSE)
+axis(2)
+```
+
+These results show that a large majority of transmission types in these used vehicles are manual, which account for 87.75% of vehicles being sold in the data set. 
+
+```{r echo=FALSE, out.width="40%", fig.align = 'center', fig.cap="Distribution of Owner Types."}
+owner.freq <- table(cars.df$owner)
+owner.pct <- prop.table(owner.freq) * 100
+owner.tbl <- data.frame(Owner_Type = names(owner.freq),
+                        Count = as.numeric(owner.freq),
+                        Percentage = round(as.numeric(owner.pct), 2))
+kable(owner.tbl, caption = "Distribution of Owner Types")
+
+barplot(owner.freq,
+        xlab = "Owner Type",
+        ylab = "Frequency",
+        axes = FALSE)
+axis(2)
+```
+
+These results show that a large majority of the used vehicles in this data set are sold by their first owner, which account for 66.51% of used vehicles being sold in this data set.
+
+```{r echo=FALSE, out.width="40%", fig.align = 'center', fig.cap="Distribution of Number of Seats."}
+seats.freq <- table(cars.df$seats)
+seats.pct <- prop.table(seats.freq) * 100
+seats.tbl <- data.frame(Seat_Number = names(seats.freq),
+                        Count = as.numeric(seats.freq),
+                        Percentage = round(as.numeric(seats.pct), 2))
+kable(seats.tbl, caption = "Distribution of Number of Seats")
+
+barplot(seats.freq,
+        xlab = "Number of Seats",
+        ylab = "Frequency",
+        axes = FALSE)
+axis(2)
+```
+
+These results show that a large majority of used vehicles being sold have 5 seats, which account for 92.4% of used vehicles being sold in the data set.
+
+# Modeling the Effect of Vehicle Characteristics on Selling Price
+
+What factors most strongly influence the selling price of a used vehicle?
+The variables mileage, engine size, kilometers driven, and max power represent technical attributes that capture a vehicle’s performance and efficiency, while seller type, transmission type, number of previous owners, and number of seats represent market and usage characteristics. Technical features serve as indicators of a car’s quality and capability, which are expected to increase its market value. In contrast, market-related variables such as high usage, manual transmission, or multiple ownership histories typically reduce perceived value. By examining how these groups of variables affect selling price, we can infer the relative importance of technical condition versus market perception in determining a vehicle’s selling price.
+
+## Hypothesis
+We hypothesize that characteristics like higher engine power and better fuel efficiency will increase selling price, while higher kilometers driven and multiple previous owners will decrease selling price. We also expect automatic transmission vehicles to have higher selling prices than manual transmission vehicles. 
+
+## Model 1:
+We fit a linear regression model with the technical characteristics of a vehicle: km_driven, mileage, engine, max_power, and an interaction term engine:max_power, with selling_price as the response variable. The fit results are displayed below: 
+```{r echo=FALSE}
+fit.technical <- lm(selling_price ~ km_driven + mileage + engine + max_power + engine:max_power, data = cars.df)
+coef_vals <- round(coef(summary(fit.technical)), 4)
+kable(coef_vals, caption = "Technical Model Coefficients")
+```
+
+
+```{r echo=FALSE, results='asis'}
+adjrsq <- summary(fit.technical)$adj.r.squared[1]
+formatted.str <- sprintf("The adjusted R-squared for this model was %.4f, which is a reasonably good fit.", adjrsq)
+cat(formatted.str)
+```
+\newpage
+
+A plot of the fit residuals and a QQ plot show the fit errors are reasonably normally distributed around zero with a mean skewed to the left.
+
+```{r echo=FALSE, out.width="50%", fig.align='center', fig.cap="Distribution of Residuals: Model 1"}
+par(mfrow=c(1,2))
+hist(fit.technical$residuals, freq = FALSE, main = "", xlab = "Residuals") 
+lines(density(fit.technical$residuals))
+
+qqnorm(y=fit.technical$residuals, main = "")
+qqline(y=fit.technical$residuals, datax = FALSE)
+```
+
+In this model, each predictor was significant. The variables that measured mileage, max power, and the interaction between engine size and max power had positive coefficients, meaning that an increase in the miles per gallon, and an increase in the max power and engine size of a vehicle increase the price. The variables that measured kilometers driven and engine size had negative coefficients, meaning that an increase in the kilometers a used vehicle has driven, and the increase in the size of an engine without a proportionate increase in power reduce the price. 
+
+## Model 2: Including Market Factors
+The data contains the technical aspects of a car, as well as characteristics that are more so market factors such as the number of previous owners or seller type. There may be significant differences in the selling price of a vehicle when considering these factors as well as the vehicles technical characteristics.
+
+We fit a second linear model that include the technical characteristics as well as the following market factors: seller_type, transmission, owner, and seats, with selling_price as the response variable
+
+```{r echo=FALSE}
+fit.comprehensive <- lm(selling_price ~ ., data = cars.df)
+coef_vals2 <- round(coef(summary(fit.comprehensive)), 4)
+kable(coef_vals2, caption = "Comprehenive Model Coefficients")
+```
+
+```{r echo=FALSE, results='asis'}
+adjrsq <- summary(fit.comprehensive)$adj.r.squared[1]
+formatted.str <- sprintf("The adjusted R-squared for this model was %.4f, which is less than the value for the first model, indicating that the inclusion of market factors didn't help the model explain more of the variance.", adjrsq)
+cat(formatted.str)
+```
+
+A plot of the fit residuals and a QQ plot show the fit errors are reasonably normally distributed around zero.
+
+```{r echo=FALSE, out.width="50%", fig.align='center', fig.cap="Distribution of Residuals: Model 2."}
+par(mfrow=c(1,2))
+hist(fit.comprehensive$residuals, freq = FALSE, main = "", xlab = "Residuals") 
+lines(density(fit.comprehensive$residuals))
+
+qqnorm(y=fit.comprehensive$residuals, main = "")
+qqline(y=fit.comprehensive$residuals, datax = FALSE)
+```
+All variables that were significant in Model 1 remain significant in Model 2. In addition, seller type, transmission type, number of previous owners (up to the third owner), and number of seats (up to seven) were significant predictors of selling price. Each of these variables has a negative coefficient, indicating that vehicles with manual transmission, individual sellers, more previous owners, and a higher seat count tend to have lower selling prices compared to their respective baseline categories.
+
+\newpage
+
+# Predicting with Models 1 and 2 
+
+We evaluated the ability of the first and second models to predict selling price on test data. We used 10-fold cross validation using 80% of the data for training and 20% for testing on each fold.
+
+```{r echo=FALSE}
+train.control <- trainControl(method = "cv", number = 10, p= 0.80)
+
+RNGversion(r.version)
+set.seed(seed.val)
+
+fit.technical.train <- train(selling_price ~ km_driven + mileage + engine + max_power, data = cars.df, method= "lm", trControl = train.control)
+
+fit.comprehensive.train <- train(selling_price ~ ., data = cars.df, method = "lm", trControl = train.control)
+```
+
+We extracted and plotted the RMSE values over the 10 folds from each model.
+
+```{r echo=FALSE, out.height="50%", fig.align='center', fig.cap="RMSE Over 10 Folds."}
+num_folds <- 10
+
+rmse.technical <- fit.technical.train$resample$RMSE
+rmse.comprehensive <- fit.comprehensive.train$resample$RMSE
+
+plot(rmse.technical, 
+     xlab="fold", 
+     xaxp = c(1, num_folds, num_folds-1), 
+     ylab="rmse", 
+     ylim=c(min(rmse.comprehensive), max(rmse.technical)), 
+     col = "darkgreen")
+
+lines(rmse.technical, col= "darkgreen")
+points(rmse.comprehensive, col = "orange")
+lines(rmse.comprehensive, col = "orange", lty = 2)
+
+legend("bottomright", legend = c("Model 1", "Model 2"), col = c("darkgreen", "orange"), lty=1:2, cex = 0.5)
+```
+From the plot, it's clear that the RMSE for model 2 was consistently lower than for model 1 on most folds.
+
+We calculated the average root mean squared error (RMSE) for both models' predictions over the 10 folds. The results are shown in the table below.
+
+```{r echo=FALSE}
+label <- c("Model 1", "Model 2")
+avg.rmse.tech <-round(mean(rmse.technical),2)
+avg.rmse.comp <-round(mean(rmse.comprehensive),2)
+rmse <- c(avg.rmse.tech, avg.rmse.comp)
+imb.tbl <- cbind(label, rmse)
+kable(imb.tbl, caption="Mean RMSE for Models 1 and 2.")
+```
+\newpage
+
+# Summary and Conclusions
+
+Both model 1 and model 2 fit the data well, and shows a positive, significant correlation with higher selling prices for vehicles with better mileage, engine size and power, and a negative correlation with lower selling prices for vehicles with higher kilometers driven, individual sellers, multiple previous owners, and a higher seat count. 
+
+Model 1 had a better fit, but a higher prediction error, suggesting potential overfitting. Model 2, while having a slightly worse fit, has a lower prediction error. This suggests that Model 2 is a better predictor of selling price. Model 2 included all predictor variables, which intuitively makes sense as to why it is the better model. The inclusion of both the technical aspects of a vehicle, as well as the market factors of a vehicle, allowed Model 2 to fit the data better and be a better predictor.
+
+We recognize that this is a relatively small data sample of the broader used car market, and that there may be additional factors outside of the variables we analyzed that influence the selling price of a vehicle.
+
+With these caveats in mind, the results suggest that vehicles with higher engine capacity, greater power output, and better fuel efficiency tend to sell for higher prices, while those with higher mileage (km driven), more previous owners, or manual transmission tend to sell for less. 
+

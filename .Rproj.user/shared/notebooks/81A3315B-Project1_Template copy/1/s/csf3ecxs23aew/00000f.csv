@@ -1,0 +1,5 @@
+"0","hist(cars.df$selling_price, freq = FALSE,"
+"0","     main = """","
+"0","     xlab = ""Selling Price (USD)"","
+"0","     breaks = 20,"
+"0","     axes = FALSE)"

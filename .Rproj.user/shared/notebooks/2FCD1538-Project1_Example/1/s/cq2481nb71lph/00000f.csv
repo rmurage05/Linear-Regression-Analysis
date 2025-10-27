@@ -1,0 +1,4 @@
+"0","developed.df <- life.df[life.df$Status == 'Developed',]"
+"0","developing.df <- life.df[life.df$Status == 'Developing',]"
+"0",""
+"0","plot(density(developed.df$Life_expectancy), main="""")"

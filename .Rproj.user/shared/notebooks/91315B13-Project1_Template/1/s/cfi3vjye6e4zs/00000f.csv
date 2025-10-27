@@ -1,0 +1,6 @@
+"0","owner.freq <- table(cars.df$owner)"
+"0","owner.pct <- prop.table(owner.freq) * 100"
+"0","owner.tbl <- data.frame(Owner_Type = names(owner.freq),"
+"0","                        Count = as.numeric(owner.freq),"
+"0","                        Percentage = round(as.numeric(owner.pct), 2))"
+"0","kable(owner.tbl, caption = ""Distribution of Owner Types"")"

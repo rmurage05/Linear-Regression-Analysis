@@ -1,0 +1,3 @@
+"0","life.df <- read.csv(""Life_Expectancy_Data.csv"")"
+"0","life.df <- na.omit(life.df)"
+"0","life.df$Status <- factor(life.df$Status)"

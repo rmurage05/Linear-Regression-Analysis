@@ -1,0 +1,2 @@
+"0",""
+"0","qqnorm(y=fit.le1$residuals, main = """") # turn off the title as using the fig.cap"

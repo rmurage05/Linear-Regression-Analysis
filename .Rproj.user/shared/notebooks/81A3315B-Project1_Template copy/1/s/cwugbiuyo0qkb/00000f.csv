@@ -1,0 +1,4 @@
+"0","adjrsq <- summary(fit.comprehensive)$adj.r.squared[1]"
+"0","formatted.str <- sprintf(""The adjusted R-squared for this model was %.4f, which is less than the value for the first model, indicating that the inclusion of market factors didn't help the model explain more of the variance."", adjrsq)"
+"0","cat(formatted.str)"
+"1","The adjusted R-squared for this model was 0.7006, which is less than the value for the first model, indicating that the inclusion of market factors didn't help the model explain more of the variance."

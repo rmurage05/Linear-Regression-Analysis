@@ -1,0 +1,4 @@
+"0","label <- c(""Developed"", ""Developing"")"
+"0","count <- c(""339"", ""2036"")"
+"0","imb.tbl <- cbind(label, count)"
+"0","kable(imb.tbl, caption=""Developed vs Developing Countries."")"

@@ -1,0 +1,4 @@
+"0","library(caret) # for cross validation"
+"0","library(knitr) # for kable"
+"0","r.version <- ""4.3.2"""
+"0","seed.val <- 123456"

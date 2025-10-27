@@ -1,0 +1,7 @@
+"0","seller_freq <- table(cars.df$seller_type)"
+"0","seller_pct <- prop.table(seller_freq) * 100"
+"0","seller_tbl <- data.frame(Seller_Type = names(seller_freq),"
+"0","                         Count = as.numeric(seller_freq),"
+"0","                         Percentage = round(as.numeric(seller_pct), 2))"
+"0",""
+"0","kable(seller_tbl, caption = ""Distribution of Seller Types"")"

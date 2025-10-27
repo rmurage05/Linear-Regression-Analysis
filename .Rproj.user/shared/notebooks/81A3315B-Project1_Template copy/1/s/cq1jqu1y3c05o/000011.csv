@@ -1,0 +1,8 @@
+"0","train.control <- trainControl(method = ""cv"", number = 10, p= 0.80)"
+"0",""
+"0","RNGversion(r.version)"
+"0","set.seed(seed.val)"
+"0",""
+"0","fit.technical.train <- train(selling_price ~ km_driven + mileage + engine + max_power, data = cars.df, method= ""lm"", trControl = train.control)"
+"0",""
+"0","fit.comprehensive.train <- train(selling_price ~ ., data = cars.df, method = ""lm"", trControl = train.control)"

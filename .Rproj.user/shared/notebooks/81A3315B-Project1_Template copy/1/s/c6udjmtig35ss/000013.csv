@@ -1,0 +1,3 @@
+"0","fit.technical <- lm(selling_price ~ km_driven + mileage + engine + max_power + engine:max_power, data = cars.df)"
+"0","coef_vals <- round(coef(summary(fit.technical)), 4)"
+"0","kable(coef_vals, caption = ""Technical Model Coefficients"")"

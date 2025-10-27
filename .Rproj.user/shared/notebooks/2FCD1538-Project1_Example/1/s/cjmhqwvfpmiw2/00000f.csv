@@ -1,0 +1,4 @@
+"0","hist(life.df$Life_expectancy, freq = FALSE, # freq = FALSE for density scale on y-axis"
+"0","     main = """", # turn off the title as using the fig.cap"
+"0","     xlab = ""Value"","
+"0","     ylab = ""Density"")"

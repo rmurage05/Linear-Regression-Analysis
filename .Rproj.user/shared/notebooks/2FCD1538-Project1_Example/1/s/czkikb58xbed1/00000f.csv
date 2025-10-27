@@ -1,0 +1,3 @@
+"0","fit.le2 <- lm (Life_expectancy ~ Status+HepB+Measles+Diphtheria+Polio+HIV_AIDS, data=life.df)"
+"0","coef.vals <- coef(summary(fit.le2))"
+"0","kable(coef.vals)"

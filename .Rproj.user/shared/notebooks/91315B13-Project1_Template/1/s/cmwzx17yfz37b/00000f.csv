@@ -1,0 +1,8 @@
+"0","sum_stats <- summary(cars.df$selling_price)"
+"0",""
+"0","summary_tbl <- data.frame(Statistic = names(sum_stats),"
+"0","                          Value = as.numeric(sum_stats))"
+"0",""
+"0","summary_tbl$Value <- format(summary_tbl$Value, scientific = FALSE, big.mark = "","")"
+"0",""
+"0","kable(summary_tbl, caption = ""Summary Statistics for Selling Price"")"

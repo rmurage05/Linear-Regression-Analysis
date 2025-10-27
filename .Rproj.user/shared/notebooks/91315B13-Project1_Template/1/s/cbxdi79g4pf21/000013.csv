@@ -1,0 +1,3 @@
+"0","fit.all <- lm(selling_price ~ ., data = cars.df)"
+"0","coef_vals2 <- coef(summary(fit.all))"
+"0","kable(coef_vals2)"

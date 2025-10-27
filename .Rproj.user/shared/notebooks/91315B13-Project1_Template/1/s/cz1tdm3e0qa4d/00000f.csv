@@ -1,0 +1,3 @@
+"0","fit.technical <- lm(selling_price ~ km_driven + mileage + engine + max_power, data = cars.df)"
+"0","coef_vals <- coef(summary(fit.technical))"
+"0","kable(coef_vals)"

@@ -1,0 +1,4 @@
+"0","adjrsq <- summary(fit.le2)$adj.r.squared[1]"
+"0","formatted.str <- sprintf(""The adjusted R^2^ for this model was %.4f, which is greater than the value for the first model, indicating that the inclusion of the Status variable helped the model be more flexible to explain more of the variance."", adjrsq)"
+"0","cat(formatted.str)"
+"1","The adjusted R^2^ for this model was 0.5274, which is greater than the value for the first model, indicating that the inclusion of the Status variable helped the model be more flexible to explain more of the variance."

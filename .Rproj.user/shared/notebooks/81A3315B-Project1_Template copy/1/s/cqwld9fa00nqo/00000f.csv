@@ -1,0 +1,4 @@
+"0","adjrsq <- summary(fit.technical)$adj.r.squared[1]"
+"0","formatted.str <- sprintf(""The adjusted R-squared for this model was %.4f, which is a reasonably good fit."", adjrsq)"
+"0","cat(formatted.str)"
+"1","The adjusted R-squared for this model was 0.7265, which is a reasonably good fit."

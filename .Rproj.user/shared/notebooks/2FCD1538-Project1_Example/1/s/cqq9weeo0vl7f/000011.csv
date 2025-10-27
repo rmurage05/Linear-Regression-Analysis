@@ -1,0 +1,1 @@
+"0","lines(density(developing.df$Life_expectancy),col='red')"
